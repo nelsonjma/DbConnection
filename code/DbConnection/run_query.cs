@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 
 namespace DbConnection
 {
@@ -122,14 +123,21 @@ namespace DbConnection
         /************************ PUBLIC ************************/
         public DataTable GetData(string conn, string sql)
         {
-            switch (QuerySelector(conn))
+            try
             {
-                case "sqlite":
-                    return GetSqliteData(conn, sql);
-                case "oledb":
-                    return GetOleDbData(conn, sql);
-                case "odbc":
-                    return GetOdbcData(conn, sql);
+                switch (QuerySelector(conn))
+                {
+                    case "sqlite":
+                        return GetSqliteData(conn, sql);
+                    case "oledb":
+                        return GetOleDbData(conn, sql);
+                    case "odbc":
+                        return GetOdbcData(conn, sql);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error getting data from db: " + ex.Message);
             }
 
             return new DataTable("dt");
@@ -137,21 +145,26 @@ namespace DbConnection
 
         private void SetData(string conn, string sql)
         {
-            switch (QuerySelector(conn))
+            try
             {
-                case "sqlite":
-                    SqliteConn.SetData(conn, sql);
-                    break;
-                case "oledb":
-                    OleConn.SetData(conn, sql);
-                    break;
-                case "odbc":
-                    OdbcConn.SetData(conn, sql);
-                    break;
+                switch (QuerySelector(conn))
+                {
+                    case "sqlite":
+                        SqliteConn.SetData(conn, sql);
+                        break;
+                    case "oledb":
+                        OleConn.SetData(conn, sql);
+                        break;
+                    case "odbc":
+                        OdbcConn.SetData(conn, sql);
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error sending data to db: " + ex.Message);
             }
         }
-
-
 
     }
 }
